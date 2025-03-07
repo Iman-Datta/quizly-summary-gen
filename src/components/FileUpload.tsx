@@ -1,17 +1,19 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from '@/context/AppContext';
 import { parsePDF } from '@/utils/pdfUtils';
-import { generateSummary } from '@/utils/apiUtils';
-import { FileUpIcon, FileTextIcon, ArrowRightIcon } from 'lucide-react';
+import { generateSummary, isApiKeySet } from '@/utils/apiUtils';
+import { FileUpIcon, FileTextIcon, ArrowRightIcon, AlertCircleIcon } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const FileUpload: React.FC = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
+  const [apiKeyWarning, setApiKeyWarning] = useState<boolean>(false);
   
   const { 
     setFileName,
@@ -21,6 +23,11 @@ const FileUpload: React.FC = () => {
     isProcessing,
     setIsProcessing
   } = useAppContext();
+
+  useEffect(() => {
+    // Check if API key is set
+    setApiKeyWarning(!isApiKeySet());
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -116,6 +123,16 @@ const FileUpload: React.FC = () => {
               Upload a PDF to generate a structured summary and quiz
             </p>
           </div>
+          
+          {apiKeyWarning && (
+            <Alert className="mb-6 border-amber-500 bg-amber-50 text-amber-800">
+              <AlertCircleIcon className="h-4 w-4 mr-2" />
+              <AlertDescription>
+                OpenAI API key not found. Please set your API key in the <code>.env</code> file. 
+                Using mock data instead.
+              </AlertDescription>
+            </Alert>
+          )}
           
           <div
             className={`upload-area ${isDragging ? 'border-primary bg-primary/10' : ''} ${file ? 'border-success bg-success/5' : ''}`}
