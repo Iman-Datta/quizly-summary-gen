@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAppContext } from '@/context/AppContext';
 import { parsePDF } from '@/utils/pdfUtils';
 import { generateSummary } from '@/utils/apiUtils';

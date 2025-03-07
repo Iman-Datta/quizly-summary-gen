@@ -133,7 +133,6 @@ const QuizResults: React.FC = () => {
                   fill="none"
                 />
                 <circle
-                  className="transition-all duration-1000 ease-out"
                   cx="50"
                   cy="50"
                   r="45"
@@ -262,7 +261,7 @@ const QuizResults: React.FC = () => {
               onClick={handleNewUpload}
               className="transition-all gap-2"
             >
-              <RotateCwIcon className="h-4 w-4" />
+              <RotateCcwIcon className="h-4 w-4" />
               <span>Upload New PDF</span>
             </Button>
             
