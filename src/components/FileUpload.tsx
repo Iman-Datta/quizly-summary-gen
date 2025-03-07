@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -143,7 +142,7 @@ const FileUpload: React.FC = () => {
                   <Button 
                     variant="outline" 
                     onClick={handleSelectFile}
-                    className="transition-all"
+                    className="smooth-transition"
                   >
                     Choose File
                   </Button>
@@ -165,7 +164,7 @@ const FileUpload: React.FC = () => {
               <Button
                 onClick={handleSubmit}
                 disabled={isProcessing}
-                className="transition-all gap-2"
+                className="smooth-transition gap-2"
               >
                 {isProcessing ? (
                   <>

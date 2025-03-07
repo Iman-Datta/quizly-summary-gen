@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -24,13 +23,11 @@ const Quiz: React.FC = () => {
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
   
-  // Reset state when question changes
   useEffect(() => {
     setSelectedOption(null);
     setIsAnswerSubmitted(false);
     setIsTimerActive(true);
     
-    // Check if this question was already answered
     const existingAnswer = userAnswers.find(a => a.questionIndex === currentQuestionIndex);
     if (existingAnswer) {
       setSelectedOption(existingAnswer.selectedOption);
@@ -49,7 +46,6 @@ const Quiz: React.FC = () => {
     
     const isCorrect = selectedOption === currentQuestion.correctAnswer;
     
-    // Save answer
     addUserAnswer({
       questionIndex: currentQuestionIndex,
       selectedOption,
@@ -61,7 +57,6 @@ const Quiz: React.FC = () => {
   };
   
   const handleSkip = () => {
-    // Save skipped answer
     addUserAnswer({
       questionIndex: currentQuestionIndex,
       selectedOption: null,
@@ -72,7 +67,6 @@ const Quiz: React.FC = () => {
   };
   
   const handleTimeout = () => {
-    // Save timeout as skipped
     addUserAnswer({
       questionIndex: currentQuestionIndex,
       selectedOption: null,
@@ -84,10 +78,8 @@ const Quiz: React.FC = () => {
   
   const moveToNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
-      // Move to next question
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
-      // Quiz completed
       setCurrentState('results');
     }
   };
@@ -172,7 +164,7 @@ const Quiz: React.FC = () => {
                 <Button 
                   variant="outline" 
                   onClick={handleSkip}
-                  className="transition-all"
+                  className="smooth-transition"
                 >
                   Skip
                 </Button>
@@ -180,7 +172,7 @@ const Quiz: React.FC = () => {
                 <Button
                   onClick={handleSubmitAnswer}
                   disabled={selectedOption === null}
-                  className="transition-all"
+                  className="smooth-transition"
                 >
                   Submit Answer
                 </Button>
@@ -188,7 +180,7 @@ const Quiz: React.FC = () => {
             ) : (
               <Button
                 onClick={moveToNextQuestion}
-                className="transition-all ml-auto gap-2"
+                className="smooth-transition ml-auto gap-2"
               >
                 {currentQuestionIndex < questions.length - 1 ? (
                   <>
