@@ -1,6 +1,8 @@
+import * as pdfjsLib from 'pdfjs-dist';
+import { GlobalWorkerOptions } from 'pdfjs-dist/build/pdf';
 
-// Import pdf-parse when it's installed
-// For now, we'll mock this functionality since we can't directly install the package
+// Set the worker source
+GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.js`;
 
 export interface PDFParseResult {
   text: string;
@@ -18,41 +20,35 @@ export interface PDFParseResult {
 
 export const parsePDF = async (file: File): Promise<string> => {
   try {
-    // In a real implementation, we would use pdf-parse
-    // Since we can't install packages, we'll use the FileReader API to get the raw data
-    // and warn the user that we'd use pdf-parse in production
+    console.log('Processing PDF with PDF.js:', file.name);
     
-    console.log('Processing PDF:', file.name);
+    // Convert the file to an ArrayBuffer
+    const arrayBuffer = await file.arrayBuffer();
     
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
+    // Load the PDF document
+    const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+    const pdf = await loadingTask.promise;
+    
+    const numPages = pdf.numPages;
+    console.log(`PDF has ${numPages} pages`);
+    
+    // Extract text from each page
+    let fullText = '';
+    
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const textContent = await page.getTextContent();
+      const pageText = textContent.items
+        .map((item: any) => item.str)
+        .join(' ');
       
-      reader.onload = () => {
-        // Mock successful PDF parsing
-        // In a real app, this would be: 
-        // const pdfParser = require('pdf-parse');
-        // const buffer = Buffer.from(reader.result as ArrayBuffer);
-        // const data = await pdfParser(buffer);
-        // resolve(data.text);
-        
-        console.log('PDF loaded, mock parsing completed');
-        const mockExtractedText = `This is mock text extracted from ${file.name}. 
-        In a real implementation, we would use pdf-parse to extract the actual text content from the PDF file.
-        The PDF would contain educational content that would be summarized and used to generate quiz questions.
-        For now, we'll generate placeholders and inform the user that they would need to install pdf-parse in a production environment.`;
-        
-        // Simulate processing time
-        setTimeout(() => resolve(mockExtractedText), 1000);
-      };
-      
-      reader.onerror = () => {
-        reject(new Error('Failed to read PDF file'));
-      };
-      
-      reader.readAsArrayBuffer(file);
-    });
+      fullText += pageText + '\n\n';
+    }
+    
+    console.log('PDF text extraction complete');
+    return fullText;
   } catch (error) {
-    console.error('Error parsing PDF:', error);
+    console.error('Error parsing PDF with PDF.js:', error);
     throw error;
   }
 };
